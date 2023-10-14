@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { type ListOfProducts } from "./types"
-import "./global.css"
 import CartProducts from "./components/CartProducts"
 import ProductItem from "./components/ProductItem"
 import { CartIcon } from "./icon"
+import NavFilter from "./components/NavFilter"
 
 function App(): JSX.Element {
   const [products, setProducts] = useState<ListOfProducts>([])
@@ -34,10 +34,9 @@ function App(): JSX.Element {
         <span className="font-bold text-green-600">Cart</span>
       </header>
       <CartProducts hideCart={hideCart} onClick={handleOpenCart} />
-      <section className="pt-5">
-        <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,450px))] items-center justify-center gap-4 px-5">
-          <ProductItem products={products} />
-        </ul>
+      <NavFilter />
+      <section className="border pt-5">
+        <ProductItem products={products} />
       </section>
       <footer>
         <p className="py-5 text-center text-sm font-semibold">
