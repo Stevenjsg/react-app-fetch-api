@@ -1,47 +1,38 @@
 import { useEffect, useState } from "react"
 import { type ListOfProducts } from "./types"
-import CartProducts from "./components/CartProducts"
 import ProductItem from "./components/ProductItem"
-import { CartIcon } from "./icon"
 import NavFilter from "./components/NavFilter"
+import { productsMock } from "./constant"
 
 function App(): JSX.Element {
+  // const API_URL = process.env.REACT_APP_API_URL
+  // console.log(API_URL)
+  // localStorage.clear()
   const [products, setProducts] = useState<ListOfProducts>([])
-  const [hideCart, setHideCart] = useState<boolean>(false)
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then(async (res) => await res.json())
-      .then((json) => {
-        setProducts(json)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    setProducts(productsMock)
+    // fetch("https://fakestoreapi.com/products")
+    //   .then(async (res) => await res.json())
+    //   .then((json) => {
+    //   })
+    //   .catch((err) => {
+    //     console.error(err)
+    //   })
   }, [])
-  const handleOpenCart = (): void => {
-    setHideCart((prev) => !prev)
-  }
+
   return (
     <main className="container relative mx-auto grid min-h-[100vh] min-w-full grid-rows-[auto,1fr,auto] overflow-x-hidden bg-blue-50 ">
-      <button
-        className="btn-primary fixed right-5 top-10 z-50 opacity-60 hover:opacity-100 lg:right-[7.2rem]"
-        onClick={handleOpenCart}
-      >
-        <CartIcon />
-      </button>
-      <header className="flex place-content-center pb-4 pt-4">
-        <h1 className="text-6xl font-bold">Products</h1>
-        <span className="font-bold text-green-600">Cart</span>
+      <header className=" z-50 flex flex-col place-content-center gap-2 pb-4 pt-4">
+        <h1 className="mx-auto text-6xl font-bold after:text-sm after:font-bold after:text-green-600 after:content-['.Cart']">
+          Products
+        </h1>
+        <NavFilter />
       </header>
-      <CartProducts hideCart={hideCart} onClick={handleOpenCart} />
-      <NavFilter />
-      <section className="border pt-5">
+      <section className="flex items-center justify-center pt-5">
         <ProductItem products={products} />
       </section>
       <footer>
-        <p className="py-5 text-center text-sm font-semibold">
-          By ❤️ SJSG {new Date().getFullYear()}
-        </p>
+        <p className="py-5 text-center text-sm font-semibold">By ❤️ SJSG {new Date().getFullYear()}</p>
       </footer>
     </main>
   )

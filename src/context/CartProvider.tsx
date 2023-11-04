@@ -1,9 +1,5 @@
 import { useContext, createContext } from "react"
-import {
-  cartManager,
-  initialState,
-  type initialStateCart,
-} from "../hooks/useCardState"
+import { cartManager, initialState, type initialStateCart } from "../hooks/useStoreCart"
 
 export const CartContext = createContext(initialState)
 interface Props {
@@ -11,8 +7,9 @@ interface Props {
 }
 
 export const CartProvider: React.FC<Props> = ({ children }) => {
-  const { count, listProduct, addProduct, removeProduct } = cartManager()
-  const value = { count, listProduct, addProduct, removeProduct }
+  const { Cart, addProduct, removeProduct, clearCart } = cartManager()
+  console.log(Cart)
+  const value = { Cart, addProduct, removeProduct, clearCart }
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
 

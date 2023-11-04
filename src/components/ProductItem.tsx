@@ -1,5 +1,5 @@
 import { type idProduct, type ListOfProducts } from "../types"
-import { useCart } from "../context/cartContext"
+import { useCart } from "../context/CartProvider"
 import { CartPlusIcon } from "../icon"
 
 interface Props {
@@ -14,20 +14,18 @@ const ProductItem: React.FC<Props> = ({ products }) => {
   return (
     <>
       {products.length === 0 ? (
-        <li className="grid grid-rows-[auto,1fr,auto] rounded-md border bg-white p-2">
+        <span className="rounded-md border bg-white p-2">
           <p>No hay productos</p>
-        </li>
+        </span>
       ) : (
-        <ul className="grid grid-cols-[repeat(auto-fill,minmax(320px,450px))] items-center justify-center gap-4 px-5">
+        <ul className="grid w-full grid-cols-[repeat(auto-fill,minmax(320px,450px))] items-center justify-center gap-4 px-5">
           {products.map((product) => (
             <li
               className={`${animated} group relative grid h-[450px] max-h-[650px] grid-rows-[auto,1fr,auto] place-content-center overflow-hidden  rounded-md border bg-white p-2 hover:bg-black`}
               key={product.id}
             >
               <hgroup className="block h-[64px] group-hover:hidden md:h-[90px] ">
-                <h2 className=" text-center text-lg font-semibold lg:text-2xl">
-                  {product.title}
-                </h2>
+                <h2 className=" text-center text-lg font-semibold lg:text-2xl">{product.title}</h2>
               </hgroup>
               <section className="mb-4 flex flex-col flex-wrap place-content-center">
                 <img
@@ -40,9 +38,7 @@ const ProductItem: React.FC<Props> = ({ products }) => {
                 >
                   <section className="opacity-0  group-hover:animate-fadeIn group-hover:text-white group-hover:opacity-100">
                     <p className="text-sm">{product.description}</p>
-                    <p className="text-xs text-green-500/50">
-                      Category: {product.category}
-                    </p>
+                    <p className="text-xs text-green-500/50">Category: {product.category}</p>
                   </section>
                 </article>
               </section>

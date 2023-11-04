@@ -1,23 +1,30 @@
-import { type ListOfIdProducts } from "../types"
+import { useEffect } from "react"
+import { type Cart } from "../types"
+interface Props {
+  cartToSave: Cart
+}
 
-export function useSaveIdLocalStorage({
-  idProducts,
-}: {
-  idProducts: ListOfIdProducts
-}): void {
-  // 1. Recuperar el array de IDs del localStorage
-  const storedIdsString: string = localStorage.getItem("cartProductId") ?? "[]"
-  const storedIds: number[] = JSON.parse(storedIdsString)
+export function useSaveIdLocalStorage({ cartToSave }: Props): void {
+  useEffect(() => {
+    // Obtener el carrito almacenado del localStorage
+    const storedCartString = localStorage.getItem("cartProduct")
 
-  // 2. Si no hay IDs guardados en localStorage, crea un array vacío
-  const newIds = idProducts.map((item) => item.id)
+    // Si no hay carrito almacenado, simplemente guardar el carrito proporcionado y salir
+    if (storedCartString === null) {
+      localStorage.setItem("cartProduct", JSON.stringify(cartToSave))
+      return
+    }
 
-  // 3. Añadir los nuevos IDs a ese array
-  const combinedIds = [...storedIds, ...newIds]
+    const storedCart: Cart = JSON.parse(storedCartString)
+    console.log(storedCart.id)
+    console.log(cartToSave.id)
+    // Si los IDs coinciden, actualizar solo la lista de productos
+    if (cartToSave.id === storedCart.id) {
+      storedCart.count = cartToSave.count
+      storedCart.ListOfProductsInCart = cartToSave.ListOfProductsInCart
 
-  // 4. Filtrar el array para mantener solo IDs únicos
-  const uniqueIds = Array.from(new Set(combinedIds))
-
-  // 5. Guardar el array actualizado de nuevo en el localStorage
-  localStorage.setItem("cartProductId", JSON.stringify(uniqueIds))
+      // Guardar el carrito actualizado en localStorage
+      localStorage.setItem("cartProduct", JSON.stringify(storedCart))
+    }
+  }, [cartToSave])
 }

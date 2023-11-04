@@ -37,11 +37,13 @@ module.exports = {
     ],
     "rules": {
         "react/prop-types": "off",
+        "no-console": "off",
         "react/react-in-jsx-scope": "off",
         "prettier/prettier": ["warn", {
-            semi: false,
-            plugins: ['prettier-plugin-tailwindcss'],
-            tailwindConfig: './tailwind.config.js',
+            "semi": false,
+            "printWidth": 120,
+            "plugins": ['prettier-plugin-tailwindcss'],
+            "tailwindConfig": './tailwind.config.js',
         }],
     }
 }

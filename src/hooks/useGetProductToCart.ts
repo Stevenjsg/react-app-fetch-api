@@ -1,68 +1,53 @@
+import { type Cart } from "./../types.d"
 import { useEffect, useState } from "react"
-import { type ListOfIdProducts, type ListOfProducts } from "../types"
+import { type ListOfProducts } from "../types"
+import { useCart } from "../context/CartProvider"
 import { useSaveIdLocalStorage } from "./useSaveIdLocalStorage"
 
 interface useGetProductToCartReturn {
+  Cart: Cart
+  error: string | null
+  setError: React.Dispatch<React.SetStateAction<string | null>>
   products: ListOfProducts
   setProducts: React.Dispatch<React.SetStateAction<ListOfProducts>>
 }
 
-export function useGetProductToCart({
-  id,
-}: {
-  id: ListOfIdProducts
-}): useGetProductToCartReturn {
+export function useGetProductToCart(): useGetProductToCartReturn {
+  const [error, setError] = useState<string | null>("")
+  const { Cart } = useCart()
   const [products, setProducts] = useState<ListOfProducts>([])
-  console.log(id)
+  useSaveIdLocalStorage({ cartToSave: Cart })
+
   useEffect(() => {
+    const newArrayIds = Cart.ListOfProductsInCart.map((product) => product.id_Product.id)
+
+    if (newArrayIds.length === 0) {
+      console.log("No hay productos en el carrito")
+      setError("No hay productos en el carrito")
+      return
+    }
+
+    // Fetch products using newArrayIds
     const fetchProducts = async (): Promise<void> => {
-      if (id.length === 0) {
-        const storedIdsString: string =
-          localStorage.getItem("cartProductId") ?? "[]"
-        const newid: ListOfIdProducts = JSON.parse(storedIdsString)
-        console.log(newid)
-        try {
-          const fetchedProducts = await Promise.all(
-            newid.map(
-              async (uniqueId) =>
-                await fetch(
-                  `https://fakestoreapi.com/products/${JSON.stringify(
-                    uniqueId,
-                  )}`,
-                ).then(async (res) => await res.json()),
-            ),
-          )
+      try {
+        const fetchedProducts = await Promise.all(
+          newArrayIds.map(
+            async (uniqueId) =>
+              await fetch(`https://fakestoreapi.com/products/${uniqueId}`).then(async (res) => await res.json()),
+          ),
+        )
 
-          useSaveIdLocalStorage({ idProducts: id })
-          setProducts(fetchedProducts)
-          console.log(fetchedProducts)
-        } catch (error) {}
-      } else {
-        const uniqueIds = Array.from(new Set(id.map((item) => item.id))) // Filtrar IDs únicos
-        console.log(uniqueIds)
-        try {
-          const fetchedProducts = await Promise.all(
-            uniqueIds.map(
-              async (uniqueId) =>
-                await fetch(
-                  `https://fakestoreapi.com/products/${uniqueId}`,
-                ).then(async (res) => await res.json()),
-            ),
-          )
-
-          useSaveIdLocalStorage({ idProducts: id })
-          setProducts(fetchedProducts)
-          console.log(fetchedProducts)
-        } catch (err) {
-          console.error("Error fetching products:", err)
-        }
+        setProducts(fetchedProducts)
+        console.log(fetchedProducts)
+      } catch (err) {
+        console.error("Error fetching products: ", err)
       }
     }
 
     fetchProducts().catch((err) => {
       console.error("Error fetching products:", err)
     })
-  }, [id])
+  }, [Cart])
 
-  return { products, setProducts }
+  return { Cart, products, error, setProducts, setError }
 }
